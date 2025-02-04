@@ -7,7 +7,7 @@ using System.Net;
 namespace EliteCore.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class GelenMailController : ControllerBase
     {
         private readonly GelenMailService gelenMailService;
@@ -18,13 +18,20 @@ namespace EliteCore.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(GelenMail), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(GelenMail), (int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult<GelenMail>> EkleAsync(GelenMail gelenMail)
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult<bool>> EkleAsync(GelenMail gelenMail)
         {
-            
-            GelenMail islemSonuc = await gelenMailService.EkleAsync(gelenMail);
-            return islemSonuc;
+            bool islemSonuc = await gelenMailService.EkleAsync(gelenMail);
+            if (islemSonuc)
+            {
+                return Ok(true); // Başarıyla tamamlandığında true dönüyoruz
+            }
+            else
+            {
+                return StatusCode(500, false); // Hata durumunda false dönüyoruz
+            }
         }
+
     }
 }

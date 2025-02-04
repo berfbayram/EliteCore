@@ -2,6 +2,7 @@
 using EliteCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EliteCore.Migrations
 {
     [DbContext(typeof(EliteDbContext))]
-    partial class EliteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250203091617_mig")]
+    partial class mig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace EliteCore.Migrations
 
                     b.Property<string>("Soyad")
                         .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("Telefon")
-                        .HasColumnType("text");
 
                     b.HasKey("GelenMailKod");
 

@@ -7,7 +7,7 @@ namespace EliteCore.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? GelenMailKod { get; set; }
+        public int GelenMailKod { get; set; }
 
         [Column(TypeName = "VARCHAR(1000)")]
         public string? GelenMesaj { get; set; }
@@ -20,5 +20,7 @@ namespace EliteCore.Models
 
         [Column(TypeName = "VARCHAR(100)")]
         public string? Soyad { get; set; }
+
+        public string? Telefon { get; set; }
     }
 }

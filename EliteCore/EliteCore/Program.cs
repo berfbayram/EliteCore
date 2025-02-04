@@ -4,24 +4,39 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
+// **CORS Politikas? Ekle**
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:9000", "http://localhost:9000")  // Frontend'inizin URL'si
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();  // E?er kimlik bilgileri gerekiyorsa
+        });
+});
 
-// DbContext servisini ekleyelim
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection"); // Connection string'i appsettings.json'dan al
+// **Database Ba?lant?s?**
+var connectionString = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Bernardo9988@";
 builder.Services.AddDbContext<EliteDbContext>(options =>
-    options.UseSqlServer(connectionString)); // SQL Server kullan?yorsan
+    options.UseNpgsql(connectionString)
+);
 
-// Swagger ve API için gerekli servisleri ekle
+// **Ba??ml?l?klar? Ekle**
+builder.Services.AddControllers();
+builder.Services.AddScoped<GelenMailService>();
+
+// **Swagger API Deste?i**
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// GelenMailService'yi ekle
-builder.Services.AddScoped<GelenMailService>();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// **CORS'u Uygula**
+app.UseCors("AllowAllOrigins");
+
+// **Swagger UI'y? Devreye Al**
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -32,8 +47,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-// Uygulaman?n çal??mas? için gerekli servisleri kullanarak i?lemleri ba?lat
-using var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-using var context = serviceScope.ServiceProvider.GetService<EliteDbContext>();
+// **Veritaban? Ba?lant?s?n? Ba?lat**
+using var serviceScope = app.Services.CreateScope();
+using var context = serviceScope.ServiceProvider.GetRequiredService<EliteDbContext>();
 
 app.Run();
